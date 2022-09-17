@@ -1,21 +1,49 @@
 # NasaApodParser
 
-**TODO: Add description**
+NASA Apod parser & downloader built with Elixir end compiled with escript.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `nasa_apod_parser` to your list of dependencies in `mix.exs`:
+### Linux (Debian-based)
 
-```elixir
-def deps do
-  [
-    {:nasa_apod_parser, "~> 0.1.0"}
-  ]
-end
+TODO: Add deb package to releases
+
+### Advanced build (or Windows)
+
+Install Erlang/OTP and Elixir
+
+Clone repo
+
+```
+git clone https://github.com/Stepan-Zubkov/nasa-apod-parser.git
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/nasa_apod_parser>.
+Go to project dir
 
+```
+cd nasa-apod-parser
+```
+
+Get dependencies
+
+```
+mix deps.get
+```
+
+Build package with escript
+
+```
+mix escript.build
+```
+
+Done! Run executable file
+
+```
+./nasa_apod_parser --help
+```
+
+or
+
+```
+escript nasa_apod_parser --help
+```
