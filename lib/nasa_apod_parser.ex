@@ -5,7 +5,7 @@ defmodule NasaApodParser do
   """
   use Application
 
-  @type api_response :: %{String.t => String.t}
+  @type api_response :: %{String.t() => String.t()}
 
   @spec start(any, any) :: {:error, any} | {:ok, pid}
   def start(_type, _args) do
@@ -13,34 +13,30 @@ defmodule NasaApodParser do
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
-
   @spec main([binary]) :: :ok
   def main(data) do
     parser_options = [
       strict: [help: :boolean, hd: :boolean, dir: :string],
       aliases: [h: :help, d: :dir]
     ]
+
     options = OptionParser.parse(data, parser_options)
 
     case options do
-      {[hd: true], ["get-url"], _} -> get_hdurl() |> IO.puts
-      {[help: true], ["get-url"], _} -> help_get_url() |> IO.puts
-      {_, ["get-url"], _} -> get_url() |> IO.puts
-
-
+      {[hd: true], ["get-url"], _} -> get_hdurl() |> IO.puts()
+      {[help: true], ["get-url"], _} -> help_get_url() |> IO.puts()
+      {_, ["get-url"], _} -> get_url() |> IO.puts()
       {[hd: true, dir: dir], ["download"], _} -> download(get_hdurl(), Path.expand(dir))
       {[hd: true], ["download"], _} -> download(get_hdurl(), get_downloads_path())
       {[dir: dir], ["download"], _} -> download(get_url(), Path.expand(dir))
-      {[help: true], ["download"], _} -> help_download() |> IO.puts
+      {[help: true], ["download"], _} -> help_download() |> IO.puts()
       {_, ["download"], _} -> download(get_url(), get_downloads_path())
-
-
-      {[help: true], _, _} -> help() |> IO.puts
-      _ -> help() |> IO.puts
+      {[help: true], _, _} -> help() |> IO.puts()
+      _ -> help() |> IO.puts()
     end
   end
 
-  @spec download(String.t, String.t) :: :ok
+  @spec download(String.t(), String.t()) :: :ok
   def download(url, dir) do
     raw_image = HTTPoison.get!(url).body
 
@@ -51,12 +47,12 @@ defmodule NasaApodParser do
     :ok
   end
 
-  @spec get_url :: String.t
+  @spec get_url :: String.t()
   def get_url do
     get_api_response()["url"]
   end
 
-  @spec get_hdurl :: String.t
+  @spec get_hdurl :: String.t()
   def get_hdurl do
     get_api_response()["hdurl"]
   end
@@ -67,9 +63,9 @@ defmodule NasaApodParser do
     Jason.decode!(response.body)
   end
 
-  @spec get_downloads_path :: String.t
+  @spec get_downloads_path :: String.t()
   def get_downloads_path do
-    home = System.fetch_env!("HOME")
+    home = System.get_env("HOME")
     russian_downloads = Path.join(home, "Загрузки")
 
     if File.exists?(russian_downloads) do
@@ -79,12 +75,19 @@ defmodule NasaApodParser do
     end
   end
 
-  @spec get_api_url :: String.t
+  @spec get_api_url :: String.t()
   def get_api_url do
-    "https://api.nasa.gov/planetary/apod?api_key=" <> System.get_env("NASA_KEY", "DEMO_KEY")
+    key =
+      if System.get_env("NASA_KEY") do
+        System.get_env("NASA_KEY")
+      else
+        "DEMO_KEY"
+      end
+
+    "https://api.nasa.gov/planetary/apod?api_key=" <> key
   end
 
-  @spec help :: String.t
+  @spec help :: String.t()
   defp help do
     """
     Usage: nasa_apod [OPTIONS] command [ARGS]...
@@ -100,7 +103,7 @@ defmodule NasaApodParser do
     """
   end
 
-  @spec help_get_url :: String.t
+  @spec help_get_url :: String.t()
   defp help_get_url do
     """
     Usage: nasa_apod [OPTIONS] get-url
@@ -113,7 +116,7 @@ defmodule NasaApodParser do
     """
   end
 
-  @spec help_download :: String.t
+  @spec help_download :: String.t()
   defp help_download do
     """
     Usage: nasa_apod [OPTIONS] download
