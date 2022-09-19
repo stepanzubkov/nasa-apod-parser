@@ -4,8 +4,8 @@ defmodule NasaApodParser.MixProject do
   def project do
     [
       app: :nasa_apod_parser,
-      version: "0.1.0",
-      elixir: "~> 1.13",
+      version: "1.0.1",
+      elixir: "~> 1.8.2",
       start_permanent: Mix.env() == :prod,
       escript: escript(),
       deps: deps()
@@ -20,7 +20,7 @@ defmodule NasaApodParser.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: { NasaApodParser, [] }
+      mod: {NasaApodParser, []}
     ]
   end
 
